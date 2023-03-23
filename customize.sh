@@ -13,3 +13,5 @@ sed -i 's/192.168.1.1/192.168.13.3/g' openwrt/package/base-files/files/bin/confi
 
 #3. Replace with JerryKuKu’s Argon
 #rm openwrt/package/lean/luci-theme-argon -rf
+
+#4. Modify default
