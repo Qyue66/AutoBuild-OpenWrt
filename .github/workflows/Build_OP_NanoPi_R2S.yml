@@ -5,7 +5,7 @@
 # Youtube Channel: https://goo.gl/fvkdwm 
 #=================================================
 
-name: Build_r2s
+name: Build_NanoPi_R2S
 
 # Add a button to trigger the workflow
 on: 
