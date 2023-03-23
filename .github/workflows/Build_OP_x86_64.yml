@@ -81,7 +81,8 @@ jobs:
     - name: Import external feeds
       working-directory: ./openwrt
       run: |
-        git clone https://github.com/kiddin9/openwrt-packages.git package/customize
+        git clone https://github.com/kiddin9/openwrt-adguardhome package/customize/adguardhome
+        git clone https://github.com/QiuSimons/openwrt-mos package/customize/mosdns
 
     - name: Configuration Customization - Build_x86_64
       env:
