@@ -82,7 +82,7 @@ jobs:
       working-directory: ./openwrt
       run: |
         git clone https://github.com/kiddin9/openwrt-adguardhome package/customize/adguardhome
-        git clone https://github.com/QiuSimons/openwrt-mos package/customize/mosdns
+        git clone https://github.com/sbwml/luci-app-mosdns.git package/customize/mosdns
 
     - name: Configuration Customization - Build_NanoPi_R2S
       env:
