@@ -1,5 +1,5 @@
 # 若在调整OpenWrt系统组件的过程有多次保存操作，则建议先删除.config.old文件再继续操作
-rm -f .config
+rm -f .config.old
 
 # 根据编译环境生成默认配置
 make defconfig
