@@ -78,11 +78,11 @@ jobs:
     #  run: |
     #    git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git package/luci-theme-argon-jerrykuku
 
-    #- name: Import external feeds
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone https://github.com/kiddin9/openwrt-adguardhome package/customize/adguardhome
-    #    git clone https://github.com/QiuSimons/openwrt-mos package/customize/mosdns
+    - name: Import external feeds
+      working-directory: ./openwrt
+      run: |
+        git clone https://github.com/kenzok8/small package/customize/small
+        git clone https://github.com/kenzok8/openwrt-packages package/customize/openwrt-packages
 
     - name: Configuration Customization - Build_x86_64
       env:
