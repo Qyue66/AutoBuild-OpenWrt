@@ -51,18 +51,25 @@ jobs:
         df -hT $PWD
         git clone --depth=1 $REPO_URL -b $REPO_BRANCH openwrt
         #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-        
-    #- name: feeds
-    #  working-directory: ./openwrt
-    #  run: |
-    #    git clone https://github.com/xiaorouji/openwrt-passwall.git package/lienol
+  
+    - name: feeds
+      working-directory: ./openwrt
+      run: |
+        echo > ./feeds.conf.default
+        echo "src-git-full packages https://git.openwrt.org/feed/packages.git
+src-git-full luci https://git.openwrt.org/project/luci.git
+src-git-full routing https://git.openwrt.org/feed/routing.git
+src-git-full telephony https://git.openwrt.org/feed/telephony.git" >> ./feeds.conf.default
 
-    - name: 更新插件
-      run: cd openwrt && ./scripts/feeds update -a
+    - name: 更新&安装插件
+      run: |
+        cd openwrt
+        ./scripts/feeds update -a
+        ./scripts/feeds install -a
       
-    - name: 安装插件
-      run: cd openwrt && ./scripts/feeds install -a
-      
+    #- name: 安装插件
+    #  run: cd openwrt && ./scripts/feeds install -a
+  
     - name: 导入额外插件源码
       run: |
         cd openwrt
