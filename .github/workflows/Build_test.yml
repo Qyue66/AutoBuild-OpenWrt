@@ -53,7 +53,7 @@ jobs:
         #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
         
     - name: 更新插件
-      run: cd openwrt && ./scripts/feeds clean && ./scripts/feeds update -a
+      run: cd openwrt && ./scripts/feeds update -a
       
     - name: 安装插件
       run: cd openwrt && ./scripts/feeds install -a
