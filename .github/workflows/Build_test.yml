@@ -91,8 +91,8 @@ jobs:
         cd openwrt
         make defconfig
         make download -j$(nproc)
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
+        #find dl -size -1024c -exec ls -l {} \;
+        #find dl -size -1024c -exec rm -f {} \;
         
     - name: 构建固件
       id: compile
