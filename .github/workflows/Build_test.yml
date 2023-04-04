@@ -66,6 +66,7 @@ jobs:
       run: |
         cd openwrt
         cat feeds.conf.default
+        make defconfig
         ./scripts/feeds clean
         ./scripts/feeds update -a
         #./scripts/feeds install -a
