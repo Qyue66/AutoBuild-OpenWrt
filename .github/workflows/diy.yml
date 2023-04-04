@@ -59,10 +59,18 @@ jobs:
         cd openwrt
         echo "#src-git ssrp https://github.com/fw876/helloworld.git" >> ./feeds.conf.default
         
-    - name: 更新&安装所需包
+    - name: 更新所需包
       working-directory: ./openwrt
       run: |
         ./scripts/feeds update -a
         ./scripts/feeds update -a
+
+    - name: 安装所需包
+      working-directory: ./openwrt
+      run: |
         ./scripts/feeds install -a
+        
+    - name: 二次安装所需包
+      working-directory: ./openwrt
+      run: |
         ./scripts/feeds install -a
