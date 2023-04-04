@@ -95,17 +95,14 @@ jobs:
         
     - name: 加载自定义设置
       run: |
-        [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_SH
+        chmod +x ./$DIY_SH && ./$DIY_SH
+        cd openwrt && make defconfig
         
     - name: 下载安装包
       #id: package
       run: |
         cd openwrt
-        make defconfig
         make download -j16
         #find dl -size -1024c -exec ls -l {} \;
         #find dl -size -1024c -exec rm -f {} \;
