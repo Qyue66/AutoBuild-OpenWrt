@@ -17,11 +17,6 @@ on:
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-21.02
-  FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: x64.config
-  DIY_SH: diy_x64.sh
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
 
 jobs:
   build:
@@ -72,9 +67,11 @@ jobs:
         git clone --depth=1 https://github.com/fw876/helloworld.git ./package/helloworld
         
     - name: 加载自定义设置
+      env:
+        CONFIG_FILE: x64.config
       run: |
-        #[ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        #chmod +x ./$DIY_SH && ./$DIY_SH
+        mv $CONFIG_FILE openwrt/.config
+        chmod +x ./diy_x64.sh && ./diy_x64.sh
         cd openwrt && make defconfig
         
     - name: 下载安装包
