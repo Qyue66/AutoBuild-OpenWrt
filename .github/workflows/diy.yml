@@ -62,7 +62,7 @@ jobs:
     - name: 更新所需包
       working-directory: ./openwrt
       run: |
-        ./scripts/feeds update -a
+        ./scripts/feeds clean
         ./scripts/feeds update -a
 
     - name: 安装所需包
