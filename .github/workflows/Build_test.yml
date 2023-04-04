@@ -19,12 +19,9 @@ env:
   REPO_BRANCH: openwrt-21.02
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: x64.config
-  #DIY_P1_SH: diy_x64_1.sh
   DIY_SH: diy_x64.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
-  #UPLOAD_RELEASE: false
-  TZ: Asia/Shanghai
 
 jobs:
   build:
@@ -36,12 +33,6 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        #sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        #sudo -E apt-get -y update
-        #sudo -E apt-get -y install ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-        #sudo -E apt-get -y autoremove --purge
-        #sudo -E apt-get -y clean
-        #sudo timedatectl set-timezone "$TZ"
         docker rmi `docker images -q`
         sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
         sudo -E apt-mark hold grub-efi-amd64-signed
@@ -58,39 +49,26 @@ jobs:
       uses: actions/checkout@v3
       
     - name: 下载固件源码
-      #working-directory: /workdir
       run: |
         df -hT $PWD
         echo -e "$(nproc)线程"
         git clone $REPO_URL -b $REPO_BRANCH openwrt
-        #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-  
-    #- name: feeds
-    #  working-directory: ./openwrt
-    #  run: |
-    #    echo > ./feeds.conf.default
-    #    echo "src-git-full packages https://git.openwrt.org/feed/packages.git;openwrt-21.02" >> ./feeds.conf.default
-    #    echo "src-git-full luci https://git.openwrt.org/project/luci.git;openwrt-21.02" >> ./feeds.conf.default
-    #    echo "src-git-full routing https://git.openwrt.org/feed/routing.git;openwrt-21.02" >> ./feeds.conf.default
-    #    echo "src-git-full telephony https://git.openwrt.org/feed/telephony.git;openwrt-21.02" >> ./feeds.conf.default
 
     - name: 更新插件
+      working-directory: ./openwrt
       run: |
-        cd openwrt
-        ls
-        ls ./package
-        #cat feeds.conf.default
-        #make defconfig
         ./scripts/feeds clean
         ./scripts/feeds update -a
-        #./scripts/feeds install -a
       
     - name: 安装插件
       run: cd openwrt && ./scripts/feeds install -a
+      
+    - name: 二次安装插件
+      run: cd openwrt && ./scripts/feeds install -a
   
     - name: 导入额外插件源码
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         git clone --depth=1 https://github.com/fw876/helloworld.git ./package/helloworld
         
     - name: 加载自定义设置
@@ -100,24 +78,21 @@ jobs:
         cd openwrt && make defconfig
         
     - name: 下载安装包
-      #id: package
       run: |
         cd openwrt
         make download -j16
-        #find dl -size -1024c -exec ls -l {} \;
-        #find dl -size -1024c -exec rm -f {} \;
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
         
     - name: 构建固件
-      #id: compile
+      working-directory: ./openwrt
       run: |
-        cd openwrt
         echo "======================="
         echo "Space usage:"
         echo "======================="
         df -h
         echo "======================="
         echo -e "$(nproc) thread compile"
-        #make -j$(nproc) || make -j1 V=s
         make -j$(nproc) V=s
         #echo "status=success" >>$GITHUB_OUTPUT
         #grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
@@ -131,7 +106,7 @@ jobs:
     - name: 上传编译信息
       uses: actions/upload-artifact@v3
       with:
-        name: OpenWrt_buildinfo
+        name: 上传编译信息
         path: ./artifact/buildinfo/
 
     - name: 上传包
@@ -143,7 +118,7 @@ jobs:
     - name: 上传固件
       uses: actions/upload-artifact@v3
       with:
-        name: OpenWrt_firmware
+        name: 上传固件
         path: ./bin/targets/
     #- name: 上传bin目录
     #  uses: actions/upload-artifact@v3
@@ -161,8 +136,8 @@ jobs:
     #    echo "FIRMWARE=$PWD" >> $GITHUB_ENV
     #    echo "status=success" >>$GITHUB_OUTPUT
         
-    #- name: 删除工作流
-    #  uses: Mattraks/delete-workflow-runs@v2
-    #  with:
-    #    retain_days: 1
-    #    keep_minimum_runs: 3
+    - name: 删除工作流
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3
