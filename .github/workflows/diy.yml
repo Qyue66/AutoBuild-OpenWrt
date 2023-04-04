@@ -1,41 +1,42 @@
-  name: test
+name: Build_x86_64
 
-  on:
-    repository_dispatch:
-    workflow_dispatch:
+# Add a button to trigger the workflow
+on: 
+  repository_dispatch:
+  workflow_dispatch:
 
-  jobs:
-    build:
-      runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-      steps:
+    steps:
 
-      - name: 清理空间和安装编译环境
-        env:
-        DEBIAN_FRONTEND: noninteractive
-        run: |
-          sudo -E apt update
-          sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
-          sudo -E timedatectl set-timezone "Asia/Shanghai"
+    - name: 清理空间和安装编译环境
+      env:
+      DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo -E apt update
+        sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
+        sudo -E timedatectl set-timezone "Asia/Shanghai"
 
-      - name: 下载固件源码
-        #working-directory: /workdir
-        run: |
-          df -hT $PWD
-          echo -e "$(nproc)线程"
-          git clone $REPO_URL -b $REPO_BRANCH openwrt
+    - name: 下载固件源码
+      #working-directory: /workdir
+      run: |
+        df -hT $PWD
+        echo -e "$(nproc)线程"
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
         #ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-       - name: 更新插件
-        run: |
-          cd openwrt
+     - name: 更新插件
+       run: |
+         cd openwrt
         #ls
         #ls ./package
         #cat feeds.conf.default
         #make defconfig
-          ./scripts/feeds clean
-          ./scripts/feeds update -a
+         ./scripts/feeds clean
+         ./scripts/feeds update -a
         #./scripts/feeds install -a
       
-      - name: 安装插件
-        run: cd openwrt && ./scripts/feeds install -a
+     - name: 安装插件
+       run: cd openwrt && ./scripts/feeds install -a
   
