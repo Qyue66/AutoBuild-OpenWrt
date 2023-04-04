@@ -77,7 +77,9 @@ jobs:
     - name: 更新插件
       run: |
         cd openwrt
-        cat feeds.conf.default
+        ls
+        ls ./package
+        #cat feeds.conf.default
         #make defconfig
         ./scripts/feeds clean
         ./scripts/feeds update -a
@@ -100,7 +102,7 @@ jobs:
         $GITHUB_WORKSPACE/$DIY_SH
         
     - name: 下载安装包
-      id: package
+      #id: package
       run: |
         cd openwrt
         #make defconfig
@@ -109,7 +111,7 @@ jobs:
         #find dl -size -1024c -exec rm -f {} \;
         
     - name: 构建固件
-      id: compile
+      #id: compile
       run: |
         cd openwrt
         echo "======================="
@@ -119,7 +121,7 @@ jobs:
         echo "======================="
         echo -e "$(nproc) thread compile"
         #make -j$(nproc) || make -j1 V=s
-        make V=s -j$(nproc)
+        make -j$(nproc) V=s
         #echo "status=success" >>$GITHUB_OUTPUT
         #grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         #[ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
