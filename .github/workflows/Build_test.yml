@@ -38,11 +38,11 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        #sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
         sudo -E apt-get -y update
         sudo -E apt-get -y install ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 python3-pip libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-        #sudo -E apt-get -y autoremove --purge
-        #sudo -E apt-get -y clean
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get -y clean
         sudo timedatectl set-timezone "$TZ"
         
     - name: 下载固件源码
@@ -76,21 +76,21 @@ jobs:
     - name: 导入额外插件源码
       run: |
         cd openwrt
-        git clone https://github.com/fw876/helloworld.git ./package/helloworld
+        git clone --depth＝1 https://github.com/fw876/helloworld.git ./package/helloworld
         
-    #- name: 加载自定义设置
-    #  run: |
-    #    [ -e files ] && mv files openwrt/files
-    #    [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-    #    chmod +x $DIY_SH
-    #    cd openwrt
-    #    $GITHUB_WORKSPACE/$DIY_SH
+    - name: 加载自定义设置
+      run: |
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x $DIY_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_SH
         
     - name: 下载安装包
       id: package
       run: |
         cd openwrt
-        make defconfig
+        #make defconfig
         make download -j$(nproc)
         #find dl -size -1024c -exec ls -l {} \;
         #find dl -size -1024c -exec rm -f {} \;
