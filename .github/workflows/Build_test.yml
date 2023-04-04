@@ -81,20 +81,26 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
         
-    - name: 构建固件
-      working-directory: ./openwrt
-      run: |
-        echo "======================="
-        echo "Space usage:"
-        echo "======================="
-        df -h
-        echo "======================="
-        echo -e "$(nproc) thread compile"
-        make -j$(nproc) V=s
+    #- name: 构建固件
+    #  working-directory: ./openwrt
+    #  run: |
+    #    echo "======================="
+    #    echo "Space usage:"
+    #    echo "======================="
+    #    df -h
+    #    echo "======================="
+    #    echo -e "$(nproc) thread compile"
+    #    make -j$(nproc) V=s
         #echo "status=success" >>$GITHUB_OUTPUT
         #grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         #[ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         #echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
+        
+    - name: 构建固件
+      working-directory: ./openwrt
+      run: |
+        echo -e "$(nproc) thread build."
+        make -j$(nproc) V=s
         
     #- name: 检查空间使用
     #  if: (!cancelled())
