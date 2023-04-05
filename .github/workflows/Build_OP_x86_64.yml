@@ -65,10 +65,10 @@ jobs:
     - name: 第二次安装插件
       run: cd openwrt && ./scripts/feeds install -a
       
-#    - name: 加载自定义配置
-#      run: |
-#        mv $CONFIG_FILE openwrt/.config
-#        chmod +x ./$DIY_SH && ./$DIY_SH
+    - name: 加载自定义配置
+      run: |
+       chmod +x ./$DIY_SH && ./$DIY_SH
+#       mv $CONFIG_FILE openwrt/.config
 
     - name: 下载依赖及安装包
       run: |
