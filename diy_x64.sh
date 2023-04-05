@@ -12,3 +12,6 @@
 
 # Modify default IP
 sed -i 's/192.168.1.1/192.168.13.3/g' openwrt/package/base-files/files/bin/config_generate
+
+#compile kernel of 5.15
+sed -i 's/KERNEL_PATCHVER:=5.4/KERNEL_PATCHVER:=5.15/g' openwrt/target/linux/x86/Makefile
