@@ -11,13 +11,13 @@
 name: Build OpenWrt
 
 on:
-  repository_dispatch:
   workflow_dispatch:
 
 env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-21.02
   CONFIG_FILE: x64.config
+  DIY_SH: diy_x64.sh
   TZ: Asia/Shanghai
 
 jobs:
@@ -25,47 +25,53 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - name: Checkout
+    - name: 检查
       uses: actions/checkout@main
 
-    - name: Initialization environment
+    - name: 安装编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
         docker rmi `docker images -q`
         sudo -E rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d /usr/local/lib/android
         sudo -E apt-mark hold grub-efi-amd64-signed
-        sudo -E apt update
-        sudo -E apt -y purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
-        sudo -E apt -y full-upgrade
-        sudo -E apt -y install ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
+        sudo -E apt -qq update
+        sudo -E apt -qq purge azure-cli* docker* ghc* zulu* llvm* firefox google* dotnet* powershell* openjdk* mysql* php* mongodb* dotnet* moby* snap*
+        sudo -E apt -qq full-upgrade
+        sudo -E apt -qq install ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libreadline-dev libssl-dev libtool lrzsz mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip libpython3-dev qemu-utils rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
         sudo -E systemctl daemon-reload
         sudo -E apt -y autoremove --purge
         sudo -E apt clean
         sudo timedatectl set-timezone "$TZ"
-#        sudo mkdir -p /workdir
-#        sudo chown $USER:$GROUPS /workdir
 
-    - name: Clone source code
-#      working-directory: /workdir
+    - name: 克隆源码
       run: |
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
-#        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
-
-    - name: Update feeds
+        
+    - name: 导入第三方插件源码
       run: |
         cd openwrt
         git clone --depth 1 https://github.com/fw876/helloworld.git package/helloworld
+        
+    - name: 更新插件
+      run: |
+        cd openwrt
         ./scripts/feeds update -a
 
-    - name: Install feeds
+    - name: 第一次安装插件
       run: cd openwrt && ./scripts/feeds install -a
       
-    - name: Secondary installation feeds
+    - name: 第二次安装插件
       run: cd openwrt && ./scripts/feeds install -a
+      
+    - name: 加载自定义配置
+      run: |
+        mv $CONFIG_FILE openwrt/.config
+        chmod +x ./$DIY_SH && ./$DIY_SH
+        cd openwrt && make defconfig
 
-    - name: Download package
+    - name: 下载依赖及安装包
       run: |
         cd openwrt
         make defconfig
@@ -73,13 +79,13 @@ jobs:
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
-    - name: Compile the firmware
+    - name: 构建固件
       run: |
         cd openwrt
         echo -e "$(nproc) thread compile"
         make V=s -j$(nproc)
 
-    - name : Upload artifact
+    - name : 上传固件
       uses: actions/upload-artifact@master
       with:
         name: OpenWrt
