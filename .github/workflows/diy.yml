@@ -9,7 +9,6 @@ name: test
 
 # Add a button to trigger the workflow
 on: 
-  repository_dispatch:
   workflow_dispatch:
 
 jobs:
@@ -18,8 +17,8 @@ jobs:
 
     steps:
     
-    - name: Setup Debug Session
-      uses: csexton/debugger-action@master
+    - name: SSH connection to Actions
+      uses: P3TERX/debugger-action@master
         
     - name: 环境安装
       env:
