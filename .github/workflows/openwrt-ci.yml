@@ -58,25 +58,12 @@ jobs:
       run: |
         cd openwrt
         ./scripts/feeds update -a
-    
-#    - name: 安装luci-app-smartdns
-#      run: |
-#        cd openwrt
-#        rm -rf ./feeds/luci/applications/luci-app-smartdns/
-#        cp -r ./feeds/kiddin9/luci-app-smartdns/ feeds/luci/applications/
-        
-#    - name: 安装luci-app-ssr-plus
-#      run: |
-#        cd openwrt
-#        rm -rf ./feeds/luci/applications/luci-app-ssr-plus/
-#        cp -r ./feeds/kiddin9/luci-app-ssr-plus/ feeds/luci/applications/
-    
 
     - name: 第一次安装插件
       run: cd openwrt && ./scripts/feeds install -a
       
-    - name: 第二次安装插件
-      run: cd openwrt && ./scripts/feeds install -a
+#    - name: 第二次安装插件
+#      run: cd openwrt && ./scripts/feeds install -a
       
     - name: 加载自定义配置
       run: |
